@@ -1,0 +1,147 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VisitGuard - Appointment Recovery</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--line:#e4e7ec;--tx:#182230;--mut:#667085;--pri:#1d4ed8;--ok:#0f766e;--warn:#b45309;--bad:#b42318;--r:10px}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+body.lock{overflow:hidden}.busy button,.busy select{pointer-events:none;opacity:.6}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.top{background:#fff;border-bottom:1px solid var(--line)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+h1{font-size:17px;margin:0;display:inline}.tag{font-size:11px;font-weight:600;background:#eef2ff;color:#3730a3;border-radius:99px;padding:3px 9px;margin-left:8px;vertical-align:middle}
+.sim{font-size:12px;color:#7a5b00;background:#fff8e6;border:1px solid #f1dfae;border-radius:99px;padding:3px 10px}
+main{padding-top:20px;padding-bottom:40px;display:grid;gap:16px}
+.hero h2{font-size:22px;line-height:1.25;margin:0 0 4px}.hero p{margin:0;color:var(--mut);max-width:760px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.sec{padding:14px 16px}.sec-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+h3{font-size:13px;margin:0;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+button{font:inherit;min-height:40px;border:1px solid var(--line);background:#fff;color:var(--tx);border-radius:8px;padding:8px 14px;cursor:pointer}
+button:hover:not(:disabled){background:#f8f9fb}button:focus-visible,select:focus-visible,tr.r:focus-visible{outline:2px solid var(--pri);outline-offset:1px}
+button.p{background:var(--pri);border-color:var(--pri);color:#fff}button.p:hover:not(:disabled){background:#1e40af}
+button:disabled{opacity:.45;cursor:not-allowed}.ghost{border-color:transparent;color:var(--mut);min-height:32px;padding:4px 8px}
+.scn{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.scn button{text-align:left;display:flex;flex-direction:column;gap:2px;height:100%}.scn small{font-size:12px;opacity:.8;font-weight:400}.scn b{font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.kpi b{display:block;font-size:24px;line-height:1.2}.kpi span{color:var(--mut);font-size:12px}.kpi.alert b{color:var(--bad)}
+.mets{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.mets div{padding:4px 0}.mets b{display:block;font-size:17px}.mets span{font-size:12px;color:var(--mut)}
+.note{font-size:12px;color:var(--mut);margin:8px 0 0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
+.list-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+select{font:inherit;min-height:36px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cnt{color:var(--mut);font-size:12px}
+table{width:100%;border-collapse:collapse}td:nth-child(4),td:nth-child(5){white-space:nowrap}th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--mut);font-weight:600;background:#fafbfc}tr:last-child td{border-bottom:0}
+tr.r{cursor:pointer}tr.r:hover{background:#f6f8ff}tr.sel{background:#eef2ff}td small{display:block;color:var(--mut);font-size:12px}
+.b{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.on_time{background:#eef2f6;color:#475467}.delayed{background:#fff1e0;color:var(--warn)}.recovered{background:#dcf5ee;color:var(--ok)}.escalated{background:#fde8e6;color:var(--bad)}
+.human{display:block;color:var(--bad);font-size:12px;font-weight:600;margin-top:2px}
+.state{padding:28px 16px;text-align:center;color:var(--mut)}.state.err{color:var(--bad)}
+.panel{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;padding:16px}
+.panel h2{font-size:16px;margin:0 0 2px}.sub{color:var(--mut);margin:0 0 12px}
+.x{display:none}.outcome{border-radius:8px;padding:10px 12px;margin:0 0 12px;font-size:13px;background:#f2f4f7}
+.outcome.escalated{background:#fde8e6;color:#7a271a}.outcome.recovered{background:#dcf5ee;color:#134e4a}.outcome.delayed{background:#fff1e0;color:#7c2d12}
+dl{display:grid;grid-template-columns:104px 1fr;gap:6px 10px;margin:0 0 14px}dt{color:var(--mut)}dd{margin:0;word-break:break-word}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.ev{margin:0;padding:0 0 0 6px;border-left:2px solid var(--line)}.ev li{list-style:none;position:relative;padding:0 0 12px 14px}
+.ev li:before{content:"";position:absolute;left:-10px;top:6px;width:10px;height:10px;border-radius:50%;background:#98a2b3;border:2px solid #fff}
+.ev .k{font-weight:600;font-size:12px}.ev .t{color:var(--mut);font-size:11px;float:right;margin-left:8px}.ev .m{display:block;color:#344054}
+.ev li.ai_proposed:before{background:#7c3aed}.ev li.guardrail_blocked:before,.ev li.contact_failed:before,.ev li.escalated:before,.ev li.retries_exhausted:before{background:var(--bad)}
+.ev li.guardrail_approved:before,.ev li.auto_recovered:before,.ev li.human_resolved:before,.ev li.contact_ok:before{background:var(--ok)}.ev li.retry:before,.ev li.guardrail_fallback:before{background:var(--warn)}
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#182230;color:#fff;padding:10px 16px;border-radius:99px;display:none;max-width:90vw;z-index:50}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.mets{grid-template-columns:repeat(4,1fr)}
+ .panel{position:fixed;inset:0;max-height:none;z-index:40;border-radius:0;border:0;transform:translateY(100%);visibility:hidden;transition:transform .2s,visibility .2s;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+ .panel.open{transform:none;visibility:visible}.x{display:inline-flex;align-items:center;margin-bottom:10px}}
+@media(max-width:760px){.wrap{padding:0 12px}.hero h2{font-size:19px}.scn{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.kpis .kpi:first-child{grid-column:1/-1}
+ .mets{grid-template-columns:repeat(2,1fr)}.sim{font-size:11px}
+ thead{display:none}table,tbody,tr,td{display:block}tr.r{margin:10px;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px}tr:last-child td{border-bottom:0}
+ tr.r{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}td{border:0;padding:0;display:block;text-align:left}td:before{content:attr(data-label);display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+ td.main{grid-column:1/-1;font-weight:600;font-size:15px}td.main:before{content:none}td:last-child{grid-column:1/-1}.human{display:block;margin:2px 0 0}}
+</style></head><body>
+<header class="top"><div class="wrap bar"><div><h1>VisitGuard</h1><span class="tag" id="ai">AI agent</span></div><span class="sim">
+
+</span></div></header>
+<main class="wrap">
+ <section class="hero"><h2 id="headline">Loading cases...</h2>
+  <p>When a medical partner misses a visit, the AI proposes the next step, deterministic rules approve or block it, and anything unresolved goes to a human with a full audit trail.</p></section>
+ <section class="card sec" aria-label="Scenarios"><div class="sec-h"><h3>Try a scenario</h3><button class="ghost" id="rs">Reset data</button></div>
+  <div class="scn">
+   <button class="p" id="d1"><b>Run Demo Scenario</b><small>First call fails, retry returns an ETA, case recovers</small></button>
+   <button id="d2"><b>Run Failure Scenario</b><small>Every attempt fails, retries stop, case escalates</small></button>
+   <button id="d3"><b>Run AI Guardrail Demo</b><small>AI proposes unsafe actions, rules block them</small></button>
+  </div></section>
+ <section class="kpis" id="kpis" aria-label="Case counts"></section>
+ <section class="card sec" aria-label="Metrics"><div class="sec-h"><h3>Metrics from recorded events</h3></div><div class="mets" id="mets"></div><p class="note" id="metlabel"></p></section>
+ <section class="layout">
+  <div class="card"><div class="list-h"><h3>Appointments</h3>
+   <div class="filters"><select id="fs" aria-label="Status"><option value="">All statuses</option><option value="on_time">On time</option><option value="delayed">Delayed</option><option value="recovered">Recovered</option><option value="escalated">Escalated</option></select>
+   <select id="fp" aria-label="Priority"><option value="">All priorities</option><option>high</option><option>medium</option><option>low</option></select><span class="cnt" id="cnt"></span></div></div>
+   <div id="state" class="state">Loading...</div>
+   <table id="tbl" hidden><thead><tr><th>Partner</th><th>Priority</th><th>Status</th><th>Scheduled</th><th>Delay</th><th>Next action</th></tr></thead><tbody id="tb"></tbody></table></div>
+  <aside class="card panel" id="dt" aria-live="polite"><p class="state">Select an appointment to see what happened and why.</p></aside>
+ </section>
+</main><div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LBL={on_time:'On time',delayed:'At risk',recovered:'Recovered',escalated:'Escalated'};
+const EV={created:'Created',delay_detected:'Delay detected',state_change:'Status change',recovery_started:'Recovery started',ai_proposed:'AI proposed',guardrail_approved:'Guardrail approved',guardrail_blocked:'Guardrail blocked',guardrail_fallback:'Rules chose',contact_ok:'Partner replied',contact_failed:'Contact failed',retry:'Retry',customer_notified:'Customer notified',retries_exhausted:'Retries exhausted',escalated:'Escalated to human',auto_recovered:'Recovered',human_resolved:'Human resolved',failure_injected:'Failure injected',demo_started:'Demo started'};
+let sel=null;
+const badge=s=>`<span class="b ${s}">${LBL[s]}</span>`;
+const hm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+const hms=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',3500)}
+async function api(method,url,body){
+  const r=await fetch(url,{method,headers:{'Content-Type':'application/json','Idempotency-Key':crypto.randomUUID()},body:body?JSON.stringify(body):undefined});
+  let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw new Error(d.error||'Request failed ('+r.status+')');return d}
+function showState(msg,err){const s=$('#state');s.className='state'+(err?' err':'');s.innerHTML=esc(msg)+(err?' <button id="retry">Retry</button>':'');s.hidden=false;$('#tbl').hidden=true;if(err)$('#retry').onclick=load}
+async function load(){
+  try{
+    const q=new URLSearchParams();if($('#fs').value)q.set('status',$('#fs').value);if($('#fp').value)q.set('priority',$('#fp').value);
+    const [all,list,m]=await Promise.all([api('GET','/api/appointments'),api('GET','/api/appointments?'+q),api('GET','/api/metrics')]);
+    const c=s=>all.filter(a=>a.status===s).length,e=c('escalated'),d=c('delayed');
+    $('#headline').textContent=e?e>1?`${e} cases need a human decision`:'1 case needs a human decision':d?`${d} appointment${d>1?'s':''} at risk - run recovery`:'All appointments on track';
+    $('#kpis').innerHTML=[['Total',all.length,''],['On time',c('on_time'),''],['At risk',d,''],['Recovered',c('recovered'),''],['Needs human',e,e?'alert':'']].map(([k,v,x])=>`<div class="kpi ${x}"><b>${v}</b><span>${k}</span></div>`).join('');
+    const pct=v=>v==null?'-':Math.round(v*100)+'%';
+    $('#mets').innerHTML=[['Auto-recovery',pct(m.autoRecoveryRate)],['Escalation rate',pct(m.escalationRate)],['Avg resolution',m.avgResolutionSec==null?'-':m.avgResolutionSec.toFixed(1)+'s'],['Failed actions',m.failedActions],['Retries',m.retries],['AI proposals',m.aiProposals],['Guardrail blocks',m.guardrailBlocks]].map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
+    $('#metlabel').textContent=m.label+'. Computed from persisted events.';
+    $('#cnt').textContent=`${list.length} of ${all.length}`;
+    if(!list.length){showState('No appointments match these filters.')}else{
+      $('#state').hidden=true;$('#tbl').hidden=false;
+      $('#tb').innerHTML=list.map(a=>`<tr class="r ${a.id===sel?'sel':''}" data-id="${a.id}" tabindex="0"><td class="main">${esc(a.partner)}<small>#${a.id} &middot; ${esc(a.customer)}</small></td><td data-label="Priority">${esc(a.priority)}</td><td data-label="Status"><span>${badge(a.status)}${a.status==='escalated'?'<span class="human">Human needed</span>':''}</span></td><td data-label="Scheduled">${hm(a.scheduled_at)}</td><td data-label="Delay">${a.delay_min?a.delay_min+' min':'-'}</td><td data-label="Next action">${esc(a.next_action)}</td></tr>`).join('');
+      document.querySelectorAll('tr.r').forEach(r=>{const go=()=>openCase(+r.dataset.id);r.onclick=go;r.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go()}}})}
+    if(sel)await detail();
+  }catch(e){showState('Could not load data: '+e.message,true)}
+}
+function openCase(id){sel=id;document.querySelectorAll('tr.r').forEach(r=>r.classList.toggle('sel',+r.dataset.id===id));detail(true)}
+function closeCase(){$('#dt').classList.remove('open');document.body.classList.remove('lock')}
+async function detail(open){
+  const {appointment:a,events}=await api('GET','/api/appointments/'+sel);
+  const acts=[['Simulate Delay','delay',{minutes:30},a.status!=='on_time'],['Run Recovery','recover',null,a.status!=='delayed'],['Simulate Failure','fail',null,['recovered','escalated'].includes(a.status)],['Approve reschedule','resolve',{note:'Reschedule approved by operator'},a.status!=='escalated']];
+  const out=a.status==='escalated'?'Needs a human: '+esc(a.escalation_reason):a.status==='recovered'?'Resolved at '+hm(a.resolved_at)+(events.some(e=>e.type==='human_resolved')?' by an operator.':' automatically within the rules.'):a.status==='delayed'?'At risk. Run recovery to let the agent act.':'Appointment on track.';
+  const p=$('#dt');
+  p.innerHTML=`<button class="x" id="back">&larr; Back to list</button><h2>${esc(a.partner)}</h2><p class="sub">Case #${a.id} &middot; ${esc(a.customer)} &middot; ${esc(a.priority)} priority</p>
+  <div class="outcome ${a.status}">${out}</div>
+  <dl><dt>Status</dt><dd>${badge(a.status)}</dd><dt>Next action</dt><dd>${esc(a.next_action)}</dd><dt>Attempts</dt><dd>${a.attempts}</dd><dt>Partner (sim.)</dt><dd>${esc(a.partner_mode)}</dd></dl>
+  <div class="acts">${acts.map((x,i)=>`<button data-i="${i}" ${x[3]?'disabled':''}>${x[0]}</button>`).join('')}</div>
+  <h3 style="margin-bottom:10px">Audit trail</h3><ul class="ev">${events.map(e=>`<li class="${esc(e.type)}"><span class="t">${hms(e.ts)}</span><span class="k">${esc(EV[e.type]||e.type)}</span><span class="m">${esc(e.message)}</span></li>`).join('')}</ul>`;
+  $('#back').onclick=closeCase;
+  p.querySelectorAll('.acts button').forEach(b=>b.onclick=()=>run(()=>api('POST',`/api/appointments/${a.id}/${acts[b.dataset.i][1]}`,acts[b.dataset.i][2])));
+  if(open){p.classList.add('open');document.body.classList.toggle('lock',innerWidth<=1000);p.scrollTop=0}
+}
+async function run(fn,openNew){
+  document.body.classList.add('busy');
+  try{const r=await fn();if(openNew&&r.id)sel=r.id;toast(r.replayed?'Duplicate ignored':'Done');await load();if(openNew&&r.id)openCase(r.id)}
+  catch(e){toast(e.message);await load()}
+  finally{document.body.classList.remove('busy')}
+}
+$('#d1').onclick=()=>run(()=>api('POST','/api/demo/recovery'),1);
+$('#d2').onclick=()=>run(()=>api('POST','/api/demo/failure'),1);
+$('#d3').onclick=()=>run(()=>api('POST','/api/demo/guardrail'),1);
+$('#rs').onclick=()=>{if(!confirm('Reset all demo data?'))return;sel=null;closeCase();$('#dt').innerHTML='<p class="state">Select an appointment to see what happened and why.</p>';run(()=>api('POST','/api/reset'))};
+$('#fs').onchange=$('#fp').onchange=load;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCase()});
+load();
+api('GET','/api/config').then(c=>$('#ai').textContent=c.aiSource==='llm'?'LLM proposer + rule guardrails':'Mock AI proposer + rule guardrails').catch(()=>{});
+</script></body></html>
