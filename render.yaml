@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: visitguard
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: MAX_RETRIES
+        value: 3
+      - key: DB_FILE
+        value: /tmp/visitguard.db
+      - key: ANTHROPIC_API_KEY
+        sync: false
