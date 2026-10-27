@@ -1,0 +1,8 @@
+{
+  "name": "visitguard",
+  "version": "1.0.0",
+  "description": "VisitGuard - AI appointment recovery agent (simulated demo prototype)",
+  "scripts": { "start": "node server/index.js", "dev": "node --watch server/index.js", "test": "node --test test/workflow.test.js" },
+  "dependencies": { "better-sqlite3": "^11.5.0", "express": "^4.21.0" },
+  "engines": { "node": ">=18" }
+}
