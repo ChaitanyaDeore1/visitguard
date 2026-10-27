@@ -29,14 +29,14 @@ function add(db, f) {
 }
 
 const SEED = [
-  { partner: 'Northside Mobile Health', customer: 'Customer #1041', priority: 'high', offsetMin: 20 },
-  { partner: 'Riverbend Diagnostics', customer: 'Customer #1042', priority: 'medium', offsetMin: 45, mode: 'flaky' },
-  { partner: 'Summit Home Visits', customer: 'Customer #1043', priority: 'low', offsetMin: 90 },
-  { partner: 'Lakeside Imaging', customer: 'Customer #1044', priority: 'high', offsetMin: 60, mode: 'late' },
-  { partner: 'Harbor Care Partners', customer: 'Customer #1045', priority: 'medium', offsetMin: 120 },
-  { partner: 'Cedar Lab Services', customer: 'Customer #1046', priority: 'high', offsetMin: -25, mode: 'fail', delayed: 25 },
-  { partner: 'Pinecrest Clinics', customer: 'Customer #1047', priority: 'low', offsetMin: -40, mode: 'flaky', delayed: 40 },
-  { partner: 'Maple Street Health', customer: 'Customer #1048', priority: 'medium', offsetMin: 150 },
+  { partner: 'Demo Partner A (mobile health)', customer: 'Customer #1041', priority: 'high', offsetMin: 20 },
+  { partner: 'Demo Partner B (diagnostics)', customer: 'Customer #1042', priority: 'medium', offsetMin: 45, mode: 'flaky' },
+  { partner: 'Demo Partner C (home visits)', customer: 'Customer #1043', priority: 'low', offsetMin: 90 },
+  { partner: 'Demo Partner D (imaging)', customer: 'Customer #1044', priority: 'high', offsetMin: 60, mode: 'late' },
+  { partner: 'Demo Partner E (care network)', customer: 'Customer #1045', priority: 'medium', offsetMin: 120 },
+  { partner: 'Demo Partner F (lab services)', customer: 'Customer #1046', priority: 'high', offsetMin: -25, mode: 'fail', delayed: 25 },
+  { partner: 'Demo Partner G (clinics)', customer: 'Customer #1047', priority: 'low', offsetMin: -40, mode: 'flaky', delayed: 40 },
+  { partner: 'Demo Partner H (health)', customer: 'Customer #1048', priority: 'medium', offsetMin: 150 },
 ];
 
 function seed(db) {
